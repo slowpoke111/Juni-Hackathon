@@ -13,8 +13,8 @@ def fetchAmenitiesOfType(latitude, longitude, amenity_type, radius):
     result = api.query(query)
     return result
 
-latitude = 40.1546 
-longitude = -75.2216  
+latitude = 39.9526 
+longitude = -75.1652  
 amenity_type = "restaurant"  # https://wiki.openstreetmap.org/wiki/Key:amenity
 radius = 1000  # Radius in meters
 
