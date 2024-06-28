@@ -2,50 +2,95 @@ import overpy
 import requests
 from requests.exceptions import HTTPError
 import json
+from typing import overload, List
 
-def _fetchAmenitiesOfType(latitude:float, longitude:float, amenity_type:str, radius:int):
+
+def _fetchAmenitiesOfTypeMultipile(latitude: float, longitude: float, amenity_list: List[str], radius: int):
     api = overpy.Overpass()
-    
-    
+    output = []
+    for amenity in amenity_list:
+        query = f"""
+            [out:json];
+            node(around:{radius},{latitude},{longitude})["amenity"="{amenity}"];
+            out;
+        """
+
+        result = api.query(query)
+        output.append(result)
+    return output
+
+def fetchAmenitiesOfTypeMultipile(latitude: float, longitude: float, amenity_type: List[str], radius: int) -> list[dict]:
+    amenities = _fetchAmenitiesOfTypeMultipile(latitude, longitude, amenity_type, radius)
+    amenitiesList = []
+    for amenity in amenities:
+        for node in amenity.nodes:
+            name = node.tags.get("name", "Unnamed")  # Defualt to unnamed
+            amenitiesList.append(
+                {
+                    "amenityType": node.tags["amenity"],
+                    "name": name,
+                    "lat": float(node.lat),
+                    "lon": float(node.lon),
+                }
+            )
+
+    return amenitiesList
+
+
+def _fetchAmenitiesOfType(latitude: float, longitude: float, amenity_type: str, radius: int):
+    api = overpy.Overpass()
+
     query = f"""
         [out:json];
         node(around:{radius},{latitude},{longitude})["amenity"="{amenity_type}"];
         out;
     """
-    
+
     result = api.query(query)
     return result
 
-def fetchAmenitiesOfType(latitude:float, longitude:float, amenity_type:str, radius:int) -> list[dict]:
+def fetchAmenitiesOfType(latitude: float, longitude: float, amenity_type: str, radius: int) -> list[dict]:
     amenities = _fetchAmenitiesOfType(latitude, longitude, amenity_type, radius)
     amenitiesList = []
     for node in amenities.nodes:
-        name = node.tags.get('name', 'Unnamed')  # Defualt to unnamed
-        amenitiesList.append({"amenityType":amenity_type, "name": name, "lat":float(node.lat), "lon":float(node.lon)})
-    
+        name = node.tags.get("name", "Unnamed")  # Defualt to unnamed
+        amenitiesList.append(
+            {
+                "amenityType": amenity_type,
+                "name": name,
+                "lat": float(node.lat),
+                "lon": float(node.lon),
+            }
+        )
+
     return amenitiesList
 
-#https://api.weather.gov/gridpoints/PHI/46,85/forecast
-def _getRainChance(url,period=0):
+# https://api.weather.gov/gridpoints/PHI/46,85/forecast
+def _getRainChance(url, period:int=0):
     try:
         response = requests.get(url)
-        response.raise_for_status() 
+        response.raise_for_status()
 
     except HTTPError as http_err:
         raise HTTPError(f"{http_err} in forecast url")
     except Exception as e:
         raise Exception(f"Error: {e} in forecast url")
     else:
-        x = response.json()["properties"]["periods"][period]["probabilityOfPrecipitation"]["value"]
-        return 0 if x==None else int(x)
-#https://api.weather.gov/gridpoints/PHI/46,85/forecast
+        x = response.json()["properties"]["periods"][period][
+            "probabilityOfPrecipitation"
+        ]["value"]
+        return 0 if x == None else int(x)
 
-def getRainChance(lat:float,long:float,period:int=0):
+
+# https://api.weather.gov/gridpoints/PHI/46,85/forecast
+
+
+def getRainChance(lat: float, long: float, period: int = 0):
     baseURL = f"https://api.weather.gov/points/{lat},{long}"
 
     try:
         response = requests.get(baseURL)
-        response.raise_for_status() #Handle status codes between 400-600 
+        response.raise_for_status()  # Handle status codes between 400-600
 
     except HTTPError as http_err:
         raise HTTPError(f"{http_err} in base url")
