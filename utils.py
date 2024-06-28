@@ -9,5 +9,5 @@ def zipToLatLong(zip_code: int):
         lng = matching_row.iloc[0]['LNG']
         return lat, lng
     else:
-        raise Exception("No lat/long found for input")
+        raise Exception("No lat/long found for input") # change to none later
         #return None, None
