@@ -27,7 +27,7 @@ def fetchAmenitiesOfTypeMultipile(latitude: float, longitude: float, amenity_typ
             name = node.tags.get("name", "Unnamed")  # Defualt to unnamed
             amenitiesList.append(
                 {
-                    "amenityType": node.tags["amenity"],
+                    "amenityType": node.tags["amenity"], #Add more tag information if neccesary. https://wiki.openstreetmap.org/wiki/Tags
                     "name": name,
                     "lat": float(node.lat),
                     "lon": float(node.lon),
