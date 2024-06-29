@@ -24,7 +24,7 @@ def miToMeters(miles: float) -> float:
 def latLongtoAddress(lat:float,long:float,params=""):
     url = f"https://nominatim.openstreetmap.org/reverse?lat={lat}&lon={long}&params={params}&format=json"
     try:
-        response = requests.get(url,headers={'User-Agent': 'YourAppName/1.0 (slow111poke@gmail.com)'})
+        response = requests.get(url,headers={'User-Agent': 'YourAppName/1.0 (slow111poke@gmail.com)'}) # create actual header later
         response.raise_for_status()  # Handle status codes between 400-600
 
     except HTTPError as http_err:
