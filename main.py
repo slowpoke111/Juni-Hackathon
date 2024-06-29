@@ -8,7 +8,7 @@ indoorActivities = ["restaurant","arts_centre","cinema","exhibition_centre","mus
 outdoorActivities = ["ice_cream","stage"]
 
 latitude, longitude = utils.zipToLatLong(19002)
-radius = 5
+radius = 2
 
 #amenities = fetchAmenitiesOfType(latitude, longitude, "restaurant", utils.miToMeters(1.5))
 amenities = fetchAmenitiesOfTypeMultipile(latitude, longitude, indoorActivities, utils.miToMeters(radius))
@@ -19,3 +19,6 @@ if getRainChance(latitude, longitude) < 20:
 
 for i in amenities:
     print(i)
+
+x = amenities[-1]
+print(utils.latLongtoAddress(x["lat"],x["long"]))

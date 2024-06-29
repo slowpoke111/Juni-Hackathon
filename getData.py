@@ -6,17 +6,9 @@ from typing import overload, List
 
 
 def _fetchAmenitiesOfTypeMultipile(latitude: float, longitude: float, amenity_list: List[str], radius: int):
-    api = overpy.Overpass()
     output = []
     for amenity in amenity_list:
-        query = f"""
-            [out:json];
-            node(around:{radius},{latitude},{longitude})["amenity"="{amenity}"];
-            out;
-        """
-
-        result = api.query(query)
-        output.append(result)
+        output.append(_fetchAmenitiesOfType(latitude,longitude,amenity,radius))
     return output
 
 def fetchAmenitiesOfTypeMultipile(latitude: float, longitude: float, amenity_type: List[str], radius: int) -> list[dict]:
@@ -30,7 +22,7 @@ def fetchAmenitiesOfTypeMultipile(latitude: float, longitude: float, amenity_typ
                     "amenityType": node.tags["amenity"], #Add more tag information if neccesary. https://wiki.openstreetmap.org/wiki/Tags
                     "name": name,
                     "lat": float(node.lat),
-                    "lon": float(node.lon),
+                    "long": float(node.lon),
                 }
             )
 
@@ -59,7 +51,7 @@ def fetchAmenitiesOfType(latitude: float, longitude: float, amenity_type: str, r
                 "amenityType": amenity_type,
                 "name": name,
                 "lat": float(node.lat),
-                "lon": float(node.lon),
+                "long": float(node.lon),
             }
         )
 
