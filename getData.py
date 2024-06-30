@@ -5,14 +5,14 @@ import json
 from typing import overload, List
 
 
-def _fetchAmenitiesOfTypeMultipile(latitude: float, longitude: float, amenity_list: List[str], radius: int):
+def _fetchAmenitiesOfTypeMultiple(latitude: float, longitude: float, amenity_list: List[str], radius: int):
     output = []
     for amenity in amenity_list:
         output.append(_fetchAmenitiesOfType(latitude,longitude,amenity,radius))
     return output
 
-def fetchAmenitiesOfTypeMultipile(latitude: float, longitude: float, amenity_type: List[str], radius: int) -> list[dict]:
-    amenities = _fetchAmenitiesOfTypeMultipile(latitude, longitude, amenity_type, radius)
+def fetchAmenitiesOfTypeMultiple(latitude: float, longitude: float, amenity_type: List[str], radius: int) -> list[dict]:
+    amenities = _fetchAmenitiesOfTypeMultiple(latitude, longitude, amenity_type, radius)
     amenitiesList = []
     for amenity in amenities:
         for node in amenity.nodes:
