@@ -33,6 +33,7 @@ def fetch_amenities():
     except Exception as e:
         result_label.configure(text=f"Error: {e}")
 
+#TODO: Add loading bar
 app = ctk.CTk()
 app.geometry("600x400")
 app.title("Untitled")
