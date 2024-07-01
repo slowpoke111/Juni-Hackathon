@@ -4,29 +4,6 @@ from requests.exceptions import HTTPError
 import json
 from typing import overload, List
 
-def _fetchAmenitiesOfTypeMultiple(latitude: float, longitude: float, amenity_list: List[str], radius: int):
-    output = []
-    for amenity in amenity_list:
-        output.append(_fetchAmenitiesOfType(latitude,longitude,amenity,radius))
-    return output
-
-def fetchAmenitiesOfTypeMultiple(latitude: float, longitude: float, amenity_type: List[str], radius: int) -> list[dict]:
-    amenities = _fetchAmenitiesOfTypeMultiple(latitude, longitude, amenity_type, radius)
-    amenitiesList = []
-    for amenity in amenities:
-        for node in amenity.nodes:
-            name = node.tags.get("name", "Unnamed")  # Defualt to unnamed
-            amenitiesList.append(
-                {
-                    "amenityType": node.tags["amenity"], #Add more tag information if neccesary. https://wiki.openstreetmap.org/wiki/Tags
-                    "name": name,
-                    "lat": float(node.lat),
-                    "long": float(node.lon),
-                }
-            )
-
-    return amenitiesList
-
 def _fetchAmenitiesOfType(latitude: float, longitude: float, amenity_type: str, radius: int):
     api = overpy.Overpass()
 
@@ -54,6 +31,67 @@ def fetchAmenitiesOfType(latitude: float, longitude: float, amenity_type: str, r
         )
 
     return amenitiesList
+
+def _fetchAmenitiesOfTypeMultiple(latitude: float, longitude: float, amenity_list: List[str], radius: int):
+    output = []
+    for amenity in amenity_list:
+        output.append(_fetchAmenitiesOfType(latitude,longitude,amenity,radius))
+    return output
+
+def fetchAmenitiesOfTypeMultiple(latitude: float, longitude: float, amenity_type: List[str], radius: int) -> list[dict]:
+    amenities = _fetchAmenitiesOfTypeMultiple(latitude, longitude, amenity_type, radius)
+    amenitiesList = []
+    for amenity in amenities:
+        for node in amenity.nodes:
+            name = node.tags.get("name", "Unnamed")  # Defualt to unnamed
+            amenitiesList.append(
+                {
+                    "amenityType": node.tags["amenity"], #Add more tag information if neccesary. https://wiki.openstreetmap.org/wiki/Tags
+                    "name": name,
+                    "lat": float(node.lat),
+                    "long": float(node.lon),
+                }
+            )
+
+    return amenitiesList
+
+
+def _fetchLeisureMultipile(latitude: float, longitude: float, leisure_types: List[str], radius: int):
+    output = []
+    for amenity in leisure_types:
+        output.append(_fetchLeisure(latitude,longitude,amenity,radius))
+    return output
+
+def _fetchLeisure(latitude: float, longitude: float, leisure_type: str, radius: int):
+    api = overpy.Overpass()
+
+    query = f"""
+        [out:json];
+        node(around:{radius},{latitude},{longitude})["leisure"="{leisure_type}"];
+        out;
+    """
+
+    result = api.query(query)
+    return result
+
+def fetchLeisure(latitude: float, longitude: float, leisure_types: List[str], radius: int) -> list[dict]:
+    amenities = _fetchLeisureMultipile(latitude, longitude, leisure_types, radius)
+    amenitiesList = []
+    for amenity in amenities:
+        for node in amenity.nodes:
+            name = node.tags.get("name", "Unnamed")  # Defualt to unnamed
+            amenitiesList.append(
+                {
+                    "amenityType": node.tags["leisure"], 
+                    "name": name,
+                    "lat": float(node.lat),
+                    "long": float(node.lon),
+                }
+            )
+
+    return amenitiesList
+
+
 
 # https://api.weather.gov/gridpoints/PHI/46,85/forecast
 def _getRainChance(url, period:int=0):
