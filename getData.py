@@ -27,7 +27,6 @@ def fetchAmenitiesOfTypeMultiple(latitude: float, longitude: float, amenity_type
 
     return amenitiesList
 
-
 def _fetchAmenitiesOfType(latitude: float, longitude: float, amenity_type: str, radius: int):
     api = overpy.Overpass()
 

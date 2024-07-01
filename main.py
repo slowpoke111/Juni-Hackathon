@@ -13,7 +13,7 @@ def fetch_amenities():
         indoorActivities = ["restaurant", "arts_centre", "cinema", "exhibition_centre", "music_venue", "planetarium", "theatre"]
         outdoorActivities = ["ice_cream", "stage"]
         
-        amenities = fetchAmenitiesOfTypeMultiple(latitude, longitude, indoorActivities, utils.miToMeters(radius))
+        amenities = fetchAmenitiesOfTypeMultiple(latitude, longitude, outdoorActivities, utils.miToMeters(radius))
         
         if getRainChance(latitude, longitude) < 20:
             outdoorAmenities = fetchAmenitiesOfTypeMultiple(latitude, longitude, outdoorActivities, utils.miToMeters(radius))
