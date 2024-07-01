@@ -4,7 +4,6 @@ from requests.exceptions import HTTPError
 import json
 from typing import overload, List
 
-
 def _fetchAmenitiesOfTypeMultiple(latitude: float, longitude: float, amenity_list: List[str], radius: int):
     output = []
     for amenity in amenity_list:

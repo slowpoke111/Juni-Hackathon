@@ -16,7 +16,6 @@ def zipToLatLong(zip_code: int):
         raise Exception("No lat/long found for input")  # change to none later
         # return None, None
 
-
 def miToMeters(miles: float) -> float:
     return miles * 1609.344
 
