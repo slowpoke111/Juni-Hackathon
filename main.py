@@ -19,17 +19,17 @@ def fetch_amenities():
             amenities.extend(outdoorAmenities)
         
         result_text = ""
-        for amenity in amenities:
-            result_text += f"{amenity}\n" #Format later
+
+        for location in amenities:
+            location["address"] = utils.latLongtoAddress(location["lat"],location["long"],"38cb03a54d6c4272ab8561ca9528a5f7")
         
-        #Testing
-        if amenities:
-            lastAmenity = amenities[-1]
-            address = utils.latLongtoAddress(lastAmenity["lat"], lastAmenity["long"])
-            result_text += f"\nAddress of the last amenity:\n{address}"
+        for amenity in amenities:
+            result_text += f"{amenity['amenityType']}: {amenity['name']} ({amenity['address']})\n" #Format later
+        
         
         result_label.configure(text=result_text)
     except Exception as e:
+        print(e)
         result_label.configure(text=f"Error: {e}")
 
 #TODO: Add loading bar
