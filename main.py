@@ -21,23 +21,28 @@ def fetch_amenities():
         result_text = ""
 
         for location in amenities:
-            location["address"] = utils.latLongtoAddress(location["lat"],location["long"],"38cb03a54d6c4272ab8561ca9528a5f7")
+            location["address"] = utils.latLongtoAddress(location["lat"],location["long"])["displayName"]
         
         for amenity in amenities:
-            result_text += f"{amenity['amenityType']}: {amenity['name']} ({amenity['address']})\n" #Format later
+            result_text += f"{amenity['amenityType'].title()}: {amenity['name']} ({amenity['address']})\n\n" #Format later
         
-        
-        result_label.configure(text=result_text)
+        result_label.configure(state="normal")
+        result_label.delete("0.0", "end")
+        result_label.insert("0.0", result_text)
+        print(result_text)
+        result_label.configure(state="disabled")
+
     except Exception as e:
         print(e)
         result_label.configure(text=f"Error: {e}")
 
 #TODO: Add loading bar
 app = ctk.CTk()
-app.geometry("600x400")
+app.geometry("1200x400")
 app.title("Untitled")
 
 ctk.set_appearance_mode("dark")
+
 
 zip_label = ctk.CTkLabel(app, text="ZIP Code:")
 zip_label.grid(row=0, column=0, padx=10, pady=10)
@@ -54,7 +59,11 @@ radius_entry.grid(row=1, column=1, padx=10, pady=10)
 fetch_button = ctk.CTkButton(app, text="Fetch Amenities", command=fetch_amenities)
 fetch_button.grid(row=2, column=0, columnspan=2, pady=20)
 
-result_label = ctk.CTkLabel(app, text="", justify=tk.LEFT, wraplength=500)
-result_label.grid(row=3, column=0, columnspan=2, padx=10, pady=10)
+
+result_label = ctk.CTkTextbox(app)
+result_label.insert("0.0","")
+result_label.grid(row=10,column=1,sticky="nsew")
+result_label.configure(state="disabled",width = 1000)
+
 
 app.mainloop()

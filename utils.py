@@ -20,28 +20,16 @@ def miToMeters(miles: float) -> float:
     return miles * 1609.344
 
 #https://nominatim.org/release-docs/latest/api/Reverse/
-def latLongtoAddress(lat: float, long: float, api_key: str, params: str = "") -> dict:
-    url = f"https://api.geoapify.com/v1/geocode/reverse?lat={lat}&lon={long}&{params}&format=json&apiKey={api_key}"
-    
+def latLongtoAddress(lat:float,long:float,params=""):
+    url = f"https://nominatim.openstreetmap.org/reverse?lat={lat}&lon={long}&params={params}&format=json"
     try:
-        headers = {'User-Agent': 'YourAppName/1.0 (slow111poke@gmail.com)'}
-        response = requests.get(url, headers=headers)
-        response.raise_for_status()  # Raise HTTPError for bad responses
+        response = requests.get(url,headers={'User-Agent': 'YourAppName/1.0 (slow111poke@gmail.com)'}) # create actual header later
+        response.raise_for_status()  # Handle status codes between 400-600
 
-    except requests.HTTPError as http_err:
-        raise requests.HTTPError(f"HTTP error occurred: {http_err}")
-
-    except Exception as err:
-        raise Exception(f"Other error occurred: {err}")
-
+    except HTTPError as http_err:
+        raise HTTPError(f"{http_err} in url")
+    except Exception as e:
+        raise Exception(f"Error: {e} in url")
     else:
-        data = response.json()
-        print(data)
-        if 'features' in data and data['features']:
-            first_feature = data['features'][0]
-            return {
-                "displayName": first_feature['properties'].get('formatted', ''),
-                "address": first_feature['properties'].get('address', {})
-            }
-        else:
-            raise Exception("No address found in the response")
+        text = response.json()
+        return {"displayName":text["display_name"],"address":text["address"]}
