@@ -13,12 +13,10 @@ def fetch_amenities():
         indoorActivities = ["restaurant", "arts_centre", "cinema", "exhibition_centre", "music_venue", "planetarium", "theatre"]
         outdoorActivities = ["fishing","garden","miniature_golf","nature_reserve","park","pitch","swimming_area","water_park","wildlife_hide"]
         
-        amenities = fetchAmenitiesOfTypeMultiple(latitude, longitude, outdoorActivities, utils.miToMeters(radius))
-        print(amenities)
-       # if getRainChance(latitude, longitude) < 20:
-        #    outdoorAmenities = fetchLeisure(latitude, longitude, outdoorActivities, utils.miToMeters(radius))
-         #   amenities.extend(outdoorAmenities)
-          #  print(amenities)
+        amenities = fetchAmenitiesOfTypeMultiple(latitude, longitude, indoorActivities, utils.miToMeters(radius))
+        if getRainChance(latitude, longitude) < 20:
+            outdoorAmenities = fetchLeisure(latitude, longitude, outdoorActivities, utils.miToMeters(radius))
+            amenities.extend(outdoorAmenities)
         
         result_text = ""
         for amenity in amenities:

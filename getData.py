@@ -12,7 +12,6 @@ def _fetchAmenitiesOfType(latitude: float, longitude: float, amenity_type: str, 
         node(around:{radius},{latitude},{longitude})["amenity"="{amenity_type}"];
         out;
     """
-
     result = api.query(query)
     return result
 
@@ -58,8 +57,8 @@ def fetchAmenitiesOfTypeMultiple(latitude: float, longitude: float, amenity_type
 
 def _fetchLeisureMultipile(latitude: float, longitude: float, leisure_types: List[str], radius: int):
     output = []
-    for amenity in leisure_types:
-        output.append(_fetchLeisure(latitude,longitude,amenity,radius))
+    for leisure in leisure_types:
+        output.append(_fetchLeisure(latitude,longitude,leisure,radius))
     return output
 
 def _fetchLeisure(latitude: float, longitude: float, leisure_type: str, radius: int):
@@ -75,12 +74,12 @@ def _fetchLeisure(latitude: float, longitude: float, leisure_type: str, radius: 
     return result
 
 def fetchLeisure(latitude: float, longitude: float, leisure_types: List[str], radius: int) -> list[dict]:
-    amenities = _fetchLeisureMultipile(latitude, longitude, leisure_types, radius)
-    amenitiesList = []
-    for amenity in amenities:
+    leisure = _fetchLeisureMultipile(latitude, longitude, leisure_types, radius)
+    leisureList = []
+    for amenity in leisure:
         for node in amenity.nodes:
             name = node.tags.get("name", "Unnamed")  # Defualt to unnamed
-            amenitiesList.append(
+            leisureList.append(
                 {
                     "amenityType": node.tags["leisure"], 
                     "name": name,
@@ -89,7 +88,7 @@ def fetchLeisure(latitude: float, longitude: float, leisure_types: List[str], ra
                 }
             )
 
-    return amenitiesList
+    return leisureList
 
 
 
