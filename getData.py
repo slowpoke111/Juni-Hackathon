@@ -4,6 +4,32 @@ from requests.exceptions import HTTPError
 import json
 from typing import overload, List
 
+def _fetchAmenitiesOfType(latitude: float, longitude: float, amenity_type: str, radius: int):
+    api = overpy.Overpass()
+
+    query = f"""
+        [out:json];
+        node(around:{radius},{latitude},{longitude})["amenity"="{amenity_type}"];
+        out;
+    """
+    result = api.query(query)
+    return result
+
+def fetchAmenitiesOfType(latitude: float, longitude: float, amenity_type: str, radius: int) -> list[dict]:
+    amenities = _fetchAmenitiesOfType(latitude, longitude, amenity_type, radius)
+    amenitiesList = []
+    for node in amenities.nodes:
+        name = node.tags.get("name", "Unnamed")  # Defualt to unnamed
+        amenitiesList.append(
+            {
+                "amenityType": amenity_type,
+                "name": name,
+                "lat": float(node.lat),
+                "long": float(node.lon),
+            }
+        )
+
+    return amenitiesList
 
 def _fetchAmenitiesOfTypeMultiple(latitude: float, longitude: float, amenity_list: List[str], radius: int):
     output = []
@@ -29,33 +55,42 @@ def fetchAmenitiesOfTypeMultiple(latitude: float, longitude: float, amenity_type
     return amenitiesList
 
 
-def _fetchAmenitiesOfType(latitude: float, longitude: float, amenity_type: str, radius: int):
+def _fetchLeisureMultipile(latitude: float, longitude: float, leisure_types: List[str], radius: int):
+    output = []
+    for leisure in leisure_types:
+        output.append(_fetchLeisure(latitude,longitude,leisure,radius))
+    return output
+
+def _fetchLeisure(latitude: float, longitude: float, leisure_type: str, radius: int):
     api = overpy.Overpass()
 
     query = f"""
         [out:json];
-        node(around:{radius},{latitude},{longitude})["amenity"="{amenity_type}"];
+        node(around:{radius},{latitude},{longitude})["leisure"="{leisure_type}"];
         out;
     """
 
     result = api.query(query)
     return result
 
-def fetchAmenitiesOfType(latitude: float, longitude: float, amenity_type: str, radius: int) -> list[dict]:
-    amenities = _fetchAmenitiesOfType(latitude, longitude, amenity_type, radius)
-    amenitiesList = []
-    for node in amenities.nodes:
-        name = node.tags.get("name", "Unnamed")  # Defualt to unnamed
-        amenitiesList.append(
-            {
-                "amenityType": amenity_type,
-                "name": name,
-                "lat": float(node.lat),
-                "long": float(node.lon),
-            }
-        )
+def fetchLeisure(latitude: float, longitude: float, leisure_types: List[str], radius: int) -> list[dict]:
+    leisure = _fetchLeisureMultipile(latitude, longitude, leisure_types, radius)
+    leisureList = []
+    for amenity in leisure:
+        for node in amenity.nodes:
+            name = node.tags.get("name", "Unnamed")  # Defualt to unnamed
+            leisureList.append(
+                {
+                    "amenityType": node.tags["leisure"], 
+                    "name": name,
+                    "lat": float(node.lat),
+                    "long": float(node.lon),
+                }
+            )
 
-    return amenitiesList
+    return leisureList
+
+
 
 # https://api.weather.gov/gridpoints/PHI/46,85/forecast
 def _getRainChance(url, period:int=0):
@@ -75,6 +110,7 @@ def _getRainChance(url, period:int=0):
 
 
 # https://api.weather.gov/gridpoints/PHI/46,85/forecast
+
 
 def getRainChance(lat: float, long: float, period: int = 0):
     baseURL = f"https://api.weather.gov/points/{lat},{long}"
