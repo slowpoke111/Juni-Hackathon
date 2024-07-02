@@ -76,7 +76,6 @@ def _getRainChance(url, period:int=0):
 
 # https://api.weather.gov/gridpoints/PHI/46,85/forecast
 
-
 def getRainChance(lat: float, long: float, period: int = 0):
     baseURL = f"https://api.weather.gov/points/{lat},{long}"
 
